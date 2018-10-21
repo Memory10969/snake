@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="content">
+	<title>彬彬出品-贪吃蛇</title>
+	<style type="text/css">
+		*{
+			margin:0px;
+			padding:0px;
+		}
+		canvas{
+			border:15px solid #0B8A4B;
+			background-color: lightblue;
+			display: block;
+			margin:100px auto;
+		}
+	</style>
+	<script type="text/javascript">
+		window.onload = function(){
+
+			// 初始化蛇的长度
+			var snakeLength = 6;
+			// 定义数组,存储蛇身坐标
+			var snakeArr = [];
+			//定义前进方向
+			var goDirection = 3;
+			//定义食物坐标
+			var foodX =0;
+			var foodY = 0;
+
+			//定义死亡
+			var isDead =false;
+			//初始化蛇
+			for(var i = 0;i<snakeLength;i++){
+				snakeArr[i] = {x:i*15,y:0};
+			}
+			// 获取画板
+			var canvas = document.getElementById("canvas");
+			var ctx = canvas.getContext("2d");
+			ctx.strokeStyle="#CECAC8";
+			//绘制网格
+			drewTable();
+			function drewTable(){
+				for (var i =1 ;i<30;i++) {
+					// 纵向
+					ctx.beginPath();
+					ctx.moveTo(i*15,0);
+					ctx.lineTo(i*15,450)
+					ctx.closePath();
+					ctx.stroke();
+
+					//横向
+					ctx.beginPath();
+					ctx.moveTo(0,i*15);
+					ctx.lineTo(450,i*15)
+					ctx.closePath();
+					ctx.stroke()
+				}
+			}
+
+			// 绘制蛇身
+			drewSnake();
+			function drewSnake(){
+				drewTable();
+				if(isDead){
+					alert("你死了,游戏结束");
+						window.clearInterval(move);
+						return;
+				}
+				for(var i = 0;i<snakeLength;i++){
+					if(i<snakeLength-1&&snakeArr[snakeLength-1].x==snakeArr[i].x&&snakeArr[snakeLength-1].y==snakeArr[i].y){
+						isDead = true;
+					}else if(snakeArr[snakeLength-1].x<0||snakeArr[snakeLength-1].y<0||snakeArr[snakeLength-1].x>435||snakeArr[snakeLength-1].y>435){
+						isDead = true;
+					}
+					if(i==snakeLength-1){
+						ctx.fillStyle = "red";
+					}else{
+						ctx.fillStyle = "green";
+					}
+					ctx.fillRect(snakeArr[i].x,snakeArr[i].y,15,15);
+				}
+
+				if(snakeArr[snakeLength-1].x==foodX&&snakeArr[snakeLength-1].y==foodY){
+					snakeLength++;
+					snakeArr.unshift({x:foodX,y:foodY});
+					randomFood();
+				}
+				ctx.fillRect(foodX,foodY,15,15);
+			}
+
+			//页面加载,自动开始移动
+			var move = setInterval(move, 150, false);
+			// 利用键盘监听,控制蛇移动
+			window.onkeydown = function(e){
+				// move(e);
+				changeDirection(e);
+			}
+
+			//根据键盘输入改变方向
+			function changeDirection(e){
+				var n = e.keyCode;
+				if(n==37){
+					if(goDirection!=3)goDirection=1;
+				}else if(n==38){
+					if(goDirection!=4)goDirection=2;
+				}else if(n==39){
+					if(goDirection!=1)goDirection=3;
+				}else if(n==40){
+					if(goDirection!=2)goDirection=4;
+				}
+			}
+			/*根据方向,修改蛇身坐标*/
+			function move(){
+				if(goDirection==1){
+					snakeArr.push({x:snakeArr[snakeLength-1].x-15,y:snakeArr[snakeLength-1].y});
+				}else if(goDirection==2){
+					snakeArr.push({x:snakeArr[snakeLength-1].x,y:snakeArr[snakeLength-1].y-15});
+				}else if(goDirection==3){
+					snakeArr.push({x:snakeArr[snakeLength-1].x+15,y:snakeArr[snakeLength-1].y});
+				}else if(goDirection==4){
+					snakeArr.push({x:snakeArr[snakeLength-1].x,y:snakeArr[snakeLength-1].y+15});
+				}
+				// 删除第一个
+				snakeArr.shift();
+				// 清空矩形
+				ctx.clearRect(0,0,450,450);
+				// 重画蛇身
+				drewSnake();
+			}
+
+			//随机生成食物坐标
+			randomFood()
+			function randomFood(){
+				foodX =  Math.floor(Math.random()*30)*15;
+				foodY =  Math.floor(Math.random()*30)*15;
+				for(var i =0;i<snakeArr.length;i++){
+					if(snakeArr[i].x==foodX&&snakeArr[i].y==foodY){
+						randomFood();
+					}
+				}
+			}
+
+		}
+	</script>
+</head>
+<body>
+	<canvas id = "canvas" width="450" height="450"></canvas>
+</body>
+</html>
