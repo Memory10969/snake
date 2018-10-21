@@ -9,22 +9,59 @@
 			margin:0px;
 			padding:0px;
 		}
+		body{
+			overflow: hidden;
+		}
 		canvas{
 			border:15px solid #0B8A4B;
 			background-color: lightblue;
 			display: block;
-			margin:100px auto;
+			margin:10px auto;
+		}
+		.scoreBox{
+			width:200px;
+			margin:0px auto;
+		}
+		#reStart{
+			display: block;
+			font-family: "楷体";
+			font-size: 24px;
+			width:150px;
+			height:50px;
+			border:1px double red;
+			border-radius: 10px;
+		}
+		#score{
+			color: red
+		}
+		.btns{
+			margin:0px auto;
+			width:200px;
+			height:300px;
+		}
+		.btns button{
+			width: 50px;
+			height: 50px;
+			border:1px solid black;
+			border-radius: 20px;
+		}
+		.up{
+			margin-left: 55px;
+		}
+		.left,.right,.down{
+			display: inline-block;
 		}
 	</style>
 	<script type="text/javascript">
+		//定义前进方向
+		var goDirection = 3;
+		var score=0;
 		window.onload = function(){
 
 			// 初始化蛇的长度
 			var snakeLength = 6;
 			// 定义数组,存储蛇身坐标
 			var snakeArr = [];
-			//定义前进方向
-			var goDirection = 3;
 			//定义食物坐标
 			var foodX =0;
 			var foodY = 0;
@@ -64,7 +101,7 @@
 			function drewSnake(){
 				drewTable();
 				if(isDead){
-					alert("你死了,游戏结束");
+					alert("好厉害,您的得分是"+score+",游戏结束,请点击重新开始");
 						window.clearInterval(move);
 						return;
 				}
@@ -83,6 +120,8 @@
 				}
 
 				if(snakeArr[snakeLength-1].x==foodX&&snakeArr[snakeLength-1].y==foodY){
+					score++;
+					document.getElementById("score").innerHTML = score;
 					snakeLength++;
 					snakeArr.unshift({x:foodX,y:foodY});
 					randomFood();
@@ -141,11 +180,30 @@
 					}
 				}
 			}
-
+			
+		}
+		function direction(n){
+			if(goDirection!==(n-2)&&goDirection!=(n+2)){
+				goDirection=n;
+			}
+		}
+		function reStart(){
+			window.location.reload()
 		}
 	</script>
 </head>
 <body>
+	<div class="scoreBox">
+		得分:<span id="score">0</span>
+		<button onclick="reStart()" id = "reStart">重新开始</button>
+	</div>
 	<canvas id = "canvas" width="450" height="450"></canvas>
+	<div class="btns">
+		<div class="up" onclick="direction(2)"><button >↑</button></div>
+		<div class="left"  onclick="direction(1)"><button >←</button></div>
+		<div class="right"  onclick="direction(4)"><button >↓</button></div>
+		<div class="down"  onclick="direction(3)"><button >→</button></div>
+	</div>
+
 </body>
 </html>
